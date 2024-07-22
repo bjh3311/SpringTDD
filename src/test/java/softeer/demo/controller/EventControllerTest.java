@@ -4,17 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import softeer.demo.dto.EventDTO;
 import softeer.demo.model.Event;
 import softeer.demo.service.EventService;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 
 import static org.assertj.core.api.Assertions.*;
@@ -51,15 +56,10 @@ class EventControllerTest {
     @DisplayName("EventService의 createEvent가 정확히 한 번 호출되었는지 확인하는 테스트")
     @Test
     void createEventTest() throws Exception{
-
-
-
-    }
-
-    @Test
-    void deleteEvent() {
+            mockMvc.perform(post("/createEvent")
 
     }
+
 
 
 }

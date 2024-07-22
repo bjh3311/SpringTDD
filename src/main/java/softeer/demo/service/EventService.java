@@ -1,7 +1,6 @@
 
 package softeer.demo.service;
 
-import softeer.demo.dto.EventDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import softeer.demo.model.Event;

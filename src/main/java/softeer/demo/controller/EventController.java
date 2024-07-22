@@ -22,18 +22,6 @@ public class EventController {
     }
 
 
-    @PostMapping("/createEvent")
-    public void createEvent(@ModelAttribute EventDTO eventDTO)
-    {
-        eventService.createEvent(eventDTO.toEntity());
-    }
-
-    @PostMapping("/deleteEvent")
-    public void deleteEvent(@ModelAttribute EventDTO eventDTO)
-    {
-
-    }
-
     //이벤트 값 설정
     @PostMapping("/setEvent")
     public void setEvent(@ModelAttribute EventDTO eventDTO)

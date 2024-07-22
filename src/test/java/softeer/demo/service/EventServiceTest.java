@@ -67,6 +67,7 @@ class EventServiceTest {
         assertThat(createdEvent.getDescription()).isEqualTo(event.getDescription());
     }
 
+
     @DisplayName("이벤트 삭제: deleteById 메소드 호출 횟수 확인")
     @Test
     void deleteEventTest() {
