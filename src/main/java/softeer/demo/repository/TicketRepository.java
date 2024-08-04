@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE) // 비관적 락
-    @Query(value = "select * from Ticket where id = :id" , nativeQuery = true)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT t FROM Ticket t WHERE t.id = :id")
     Optional<Ticket> findByIdWithLock(@Param("id") Long id);
 }

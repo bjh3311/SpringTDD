@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 import softeer.demo.entity.Ticket;
 import softeer.demo.repository.TicketRepository;
 
@@ -29,22 +31,20 @@ class TicketServiceTest {
 
     private Ticket ticket;
 
-
     @AfterEach
     void clear(){
         ticketRepository.deleteAll();
     }
 
-
     @Test
     @DisplayName(value = "mysql에 멀티스레드 환경에서 락 없이 동시에 티켓 수를 감소시키는 테스트입니다")
     void getTicket() {
-
+        int participant = 100;
         //given
         ticket = new Ticket();
-        ticket.setTicket(100);
+        ticket.setTicket(participant);
         ticket = ticketRepository.save(ticket);
-        int participant = 100;
+
         ExecutorService executorService = Executors.newFixedThreadPool(participant);//100명
         CountDownLatch latch = new CountDownLatch(participant);//100만큼 latch를 설정
 
@@ -62,7 +62,6 @@ class TicketServiceTest {
             });
         }
 
-
         try{
             latch.await();//설정된 latch가 0이 될때 까지 다음코드로 안넘어간다
         } catch (InterruptedException ex){
@@ -77,17 +76,19 @@ class TicketServiceTest {
     void getLockTicket(){
 
         //given
+        int participant = 10000;
         ticket = new Ticket();
-        ticket.setTicket(100);
+        ticket.setTicket(participant);
         ticket = ticketRepository.save(ticket);
-        int participant = 100;
+
         ExecutorService executorService = Executors.newFixedThreadPool(participant);//100명
         CountDownLatch latch = new CountDownLatch(participant);//100만큼 latch를 설정
 
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 
         //when
         for(int i = 0 ; i < participant ; i++){
-
             executorService.submit(()->{
                 try{
                     ticketService.decreaseTicketWithLock(ticket.getId());
@@ -103,8 +104,13 @@ class TicketServiceTest {
         } catch (InterruptedException ex){
             log.debug(ex.getMessage());
         }
+
+        stopWatch.stop();
+
         //then
         assertThat(ticketRepository.findById(ticket.getId()).get().getTicket()).isEqualTo(0);
+
+        System.out.println(stopWatch.prettyPrint());
 
     }
 }
