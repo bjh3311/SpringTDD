@@ -65,10 +65,11 @@ class MySQLTicketServiceTest {
         }
         //then
         assertThat(mySQLTicketService.findById(ticket.getId()).getTicket()).isEqualTo(0);
+        executorService.shutdown();
     }
 
     @Test
-    @DisplayName(value = "멀티스레드 환경에서 동시성 제어와 함께 동시에 티켓 수를 감소시키는 테스트입니다")
+    @DisplayName(value = "멀티스레드 환경에서 MySQL로 락을 걸고 동시성 제어를 하여 티켓 수를 감소시키는 테스트입니다")
     void getLockTicket(){
 
         //given
@@ -106,6 +107,7 @@ class MySQLTicketServiceTest {
         assertThat(mySQLTicketService.findById(ticket.getId()).getTicket()).isEqualTo(0);
 
         System.out.println(stopWatch.prettyPrint());
+        executorService.shutdown();
 
     }
 }

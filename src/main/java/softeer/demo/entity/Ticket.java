@@ -26,6 +26,6 @@ public class Ticket {
         if(this.ticket-1 <0){
             throw new RuntimeException("선착순 이벤트가 마감되었습니다." );
         }
-        System.out.println("잔여 티켓 : " + --this.ticket);
+        ticket--;
     }
 }
