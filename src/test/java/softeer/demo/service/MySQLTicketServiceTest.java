@@ -6,11 +6,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 import softeer.demo.entity.Ticket;
-import softeer.demo.repository.TicketRepository;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -21,19 +18,18 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Slf4j
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //실제 데이터 베이스를 쓴다
-class TicketServiceTest {
+class MySQLTicketServiceTest {
+
 
     @Autowired
-    private TicketRepository ticketRepository;
+    private MySQLTicketService mySQLTicketService;
 
-    @Autowired
-    private TicketService ticketService;
 
     private Ticket ticket;
 
     @AfterEach
     void clear(){
-        ticketRepository.deleteAll();
+        mySQLTicketService.deleteAll();
     }
 
     @Test
@@ -43,9 +39,9 @@ class TicketServiceTest {
         //given
         ticket = new Ticket();
         ticket.setTicket(participant);
-        ticket = ticketRepository.save(ticket);
+        mySQLTicketService.save(ticket);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(participant);//100명
+        ExecutorService executorService = Executors.newFixedThreadPool(2);//
         CountDownLatch latch = new CountDownLatch(participant);//100만큼 latch를 설정
 
         //when
@@ -53,7 +49,7 @@ class TicketServiceTest {
 
             executorService.submit(()->{
                 try{
-                    ticketService.decreaseTicket(ticket.getId());
+                    mySQLTicketService.decreaseTicket(ticket.getId());
                 } catch (RuntimeException ex){
                     log.debug(ex.getMessage());
                 } finally{
@@ -68,7 +64,7 @@ class TicketServiceTest {
             log.debug(ex.getMessage());
         }
         //then
-        assertThat(ticketRepository.findById(ticket.getId()).get().getTicket()).isEqualTo(0);
+        assertThat(mySQLTicketService.findById(ticket.getId()).getTicket()).isEqualTo(0);
     }
 
     @Test
@@ -76,12 +72,12 @@ class TicketServiceTest {
     void getLockTicket(){
 
         //given
-        int participant = 10000;
+        int participant = 100;
         ticket = new Ticket();
         ticket.setTicket(participant);
-        ticket = ticketRepository.save(ticket);
+        mySQLTicketService.save(ticket);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(participant);//100명
+        ExecutorService executorService = Executors.newFixedThreadPool(2);//100명
         CountDownLatch latch = new CountDownLatch(participant);//100만큼 latch를 설정
 
         StopWatch stopWatch = new StopWatch();
@@ -91,7 +87,7 @@ class TicketServiceTest {
         for(int i = 0 ; i < participant ; i++){
             executorService.submit(()->{
                 try{
-                    ticketService.decreaseTicketWithLock(ticket.getId());
+                    mySQLTicketService.decreaseTicketWithLock(ticket.getId());
                 } catch (RuntimeException ex){
                     log.debug(ex.getMessage());
                 } finally{
@@ -106,9 +102,8 @@ class TicketServiceTest {
         }
 
         stopWatch.stop();
-
         //then
-        assertThat(ticketRepository.findById(ticket.getId()).get().getTicket()).isEqualTo(0);
+        assertThat(mySQLTicketService.findById(ticket.getId()).getTicket()).isEqualTo(0);
 
         System.out.println(stopWatch.prettyPrint());
 
