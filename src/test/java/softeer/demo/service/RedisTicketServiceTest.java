@@ -62,6 +62,7 @@ class RedisTicketServiceTest {
         } catch (InterruptedException ex){
             log.debug(ex.getMessage());
         }
+
         //then
         assertThat(redisTicketService.findByKey(key)).isEqualTo(0);
         executorService.shutdown();
@@ -74,11 +75,11 @@ class RedisTicketServiceTest {
 
 
         //given
-        int participant = 100;
+        int participant = 100000;
         redisTicketService.saveValue(key, participant);
 
         //when
-        ExecutorService executorService = Executors.newFixedThreadPool(2);//100명
+        ExecutorService executorService = Executors.newFixedThreadPool(100);//100명
         CountDownLatch latch = new CountDownLatch(participant);//100만큼 latch를 설정
 
         StopWatch stopWatch = new StopWatch();

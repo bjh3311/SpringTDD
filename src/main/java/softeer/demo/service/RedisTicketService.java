@@ -39,6 +39,10 @@ public class RedisTicketService {
 
     public void decreaseValueWithLock(String key){
 
+
+        redisTemplate.opsForValue().decrement(key);
+
+        /*
         // RLock 인스턴스를 생성합니다. key 값에 "_lock"을 붙여서 고유한 락 이름을 생성합니다.
         RLock lock = redissonClient.getLock(key + "_lock");
 
@@ -63,7 +67,7 @@ public class RedisTicketService {
             // 인터럽트 예외가 발생한 경우 현재 스레드의 인터럽트 상태를 설정합니다.
             // tryLock 메서드 호출 중 인터럽트가 발생할 수 있으므로 이를 처리하기 위한 catch 블록
             Thread.currentThread().interrupt();
-        }
+        }*/
     }
 
     public void deleteAllKeysCurrentDatabase(){

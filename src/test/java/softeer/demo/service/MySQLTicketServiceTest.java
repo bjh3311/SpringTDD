@@ -73,7 +73,7 @@ class MySQLTicketServiceTest {
     void getLockTicket(){
 
         //given
-        int participant = 100;
+        int participant = 100000;
         ticket = new Ticket();
         ticket.setTicket(participant);
         mySQLTicketService.save(ticket);
